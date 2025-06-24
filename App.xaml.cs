@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace QuizApp;
+namespace TestMaster;
 
 /// <summary>
 /// Interaction logic for App.xaml

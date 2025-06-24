@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuizApp.Models
+namespace TestMaster.Models
 {
-    class Phone
+    public interface IQuestion
     {
-
+        string Text { get; set; }
+        bool IsAnswerCorrect { get; set; }
     }
 }
