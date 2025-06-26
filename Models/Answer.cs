@@ -7,23 +7,11 @@ namespace TestMaster.Models
     {
         private string text;
         private bool isSelected;
-        private bool isCorrect;
-        
-
-        public string Text
-        {
-            get => text;
-            set { text = value; OnPropertyChanged(); }
-        }
-        public bool IsSelected
-        {
-            get => isSelected;
-            set { isSelected = value; OnPropertyChanged(); }
-        }
-        public bool IsCorrect { 
-            get => isCorrect; 
-            set { isCorrect = value; OnPropertyChanged(); } 
-        }
+        public int Id { get; set; }
+        public int QuestionId { get; set; }
+        public string Text { get => text; set { text = value; OnPropertyChanged(); } }
+        public bool IsSelected { get => isSelected; set { isSelected = value; OnPropertyChanged(); } }
+        public Question Question { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>

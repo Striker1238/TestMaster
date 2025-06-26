@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using TestMaster.Commands;
 using TestMaster.Models;
+using TestMaster.Services;
 
 namespace TestMaster.ViewModels
 {
@@ -30,46 +32,12 @@ namespace TestMaster.ViewModels
             set => SetProperty(ref _currentQuestion, value);
         }
 
-        public ObservableCollection<IQuestion> Questions { get; }
+        public List<IQuestion> Questions { get; set; }
 
         private int _currentQuestionIndex;
 
         public MainViewModel()
         {
-            Questions = new ObservableCollection<IQuestion>
-            {
-                new SingleChoiceQuestion
-                {
-                    Text = "В течение какого срока должны храниться результаты индивидуального дозиметрического контроля?",
-                    Answers = {
-                        new Answer { Text = "Не менее 30 лет" },
-                        new Answer { Text = "Не менее 20 лет" },
-                        new Answer { Text = "Не менее 50 лет" }
-                    },
-                    CorrectAnswerIndex = 2
-                },
-                new SingleChoiceQuestion
-                {
-                    Text = "Кто, согласно Федеральному закону «Об использовании атомной энергии», несет ответственность за убытки и вред, причиненные радиационным воздействием?",
-                    Answers = {
-                        new Answer { Text = "Правительство Российской Федерации." },
-                        new Answer { Text = "Госкорпорация «Росатом»." },
-                        new Answer { Text = "Эксплуатирующая организация." }
-                    },
-                    CorrectAnswerIndex = 2
-                },
-                new SingleChoiceQuestion
-                {
-                    Text = "Какие значения основных пределов доз установлены для персонала (группа А)?",
-                    Answers = {
-                        new Answer { Text = "1 мЗв в год за любые последние 5 лет." },
-                        new Answer { Text = "5 мЗв в год в среднем за любые 5 лет." },
-                        new Answer { Text = "20 мЗв в год за любые последовательные 5 лет, но не более 50 мЗв в год." }
-                    },
-                    CorrectAnswerIndex = 2
-                }
-            };
-
             StartTestCommand = new RelayCommand(_ => StartTest(), _ => true);
             AnswerCommand = new RelayCommand(_ => Answer(), _ => IsTestRunning);
             ResetAnswerCommand = new RelayCommand(_ => ResetAnswer(), _ => IsTestRunning);
@@ -79,35 +47,39 @@ namespace TestMaster.ViewModels
 
         private void StartTest()
         {
+            using var db = new DatabaseConnectionService();
+
+            Questions = db.questions.Include(q => q.Answers)
+                                    .ToList()
+                                    .Cast<IQuestion>()
+                                    .ToList();
+
             _currentQuestionIndex = 0;
             CurrentQuestion = Questions[_currentQuestionIndex];
             IsTestRunning = true;
 
-            // Сброс всех ответов
-            foreach (var question in Questions.OfType<SingleChoiceQuestion>())
-            {
-                foreach (var answer in question.Answers)
-                {
-                    answer.IsSelected = false;
-                }
-            }
+            ResetAnswer();
         }
 
         private void Answer()
         {
-            if (CurrentQuestion is SingleChoiceQuestion scq)
-            {
-                bool isCorrect = scq.IsAnswerCorrect();
+            var selectedIndexes = CurrentQuestion.Answers
+                .Select((a, idx) => new { a.IsSelected, idx })
+                .Where(x => x.IsSelected)
+                .Select(x => x.idx)
+                .ToList();
 
-                // Здесь можно логировать или считать правильные ответы
-                Console.WriteLine(isCorrect ? "Верно" : "Неверно");
-            }
+            bool isCorrect = selectedIndexes.Count == CurrentQuestion.CorrectAnswerIndexes.Count &&
+                             !selectedIndexes.Except(CurrentQuestion.CorrectAnswerIndexes).Any() &&
+                             !CurrentQuestion.CorrectAnswerIndexes.Except(selectedIndexes).Any();
+
+            Console.WriteLine(isCorrect ? "Верно" : "Неверно");
 
             if (_currentQuestionIndex < Questions.Count - 1)
             {
                 _currentQuestionIndex++;
                 CurrentQuestion = Questions[_currentQuestionIndex];
-            }
+            } 
             else
             {
                 IsTestRunning = false;
@@ -117,9 +89,9 @@ namespace TestMaster.ViewModels
 
         private void ResetAnswer()
         {
-            if (CurrentQuestion is SingleChoiceQuestion scq)
+            if (CurrentQuestion is not null)
             {
-                foreach (var answer in scq.Answers)
+                foreach (var answer in CurrentQuestion.Answers)
                 {
                     answer.IsSelected = false;
                 }

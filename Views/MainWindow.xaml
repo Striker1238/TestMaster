@@ -35,8 +35,8 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <RadioButton Content="{Binding Text}" 
-                                     GroupName="Answers"
-                                     IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                             GroupName="Answers"
+                                             IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

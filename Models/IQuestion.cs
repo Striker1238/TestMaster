@@ -9,6 +9,7 @@ namespace TestMaster.Models
     public interface IQuestion
     {
         string Text { get; set; }
-        bool IsAnswerCorrect { get; set; }
+        public List<Answer> Answers { get; set; }
+        public List<int> CorrectAnswerIndexes { get; set; }
     }
 }
