@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="PrimaryRadioButton" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryDark}" />
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="18" Height="18"
+                            CornerRadius="8"
+                            BorderThickness="1"
+                            BorderBrush="{DynamicResource PrimaryDark}"
+                            Background="Transparent">
+                            <Ellipse x:Name="CheckedIndicator"
+                                 Width="10" Height="10"
+                                 Fill="{DynamicResource AccentMint}"
+                                 Visibility="Collapsed"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                        </Border>
+                        <ContentPresenter Margin="8,0,0,0"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckedIndicator" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="CheckedIndicator" Property="Fill" Value="{DynamicResource AccentMint}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryDark}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource AccentOrange}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentOrange}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BaseWhite}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

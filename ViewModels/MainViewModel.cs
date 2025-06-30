@@ -31,9 +31,15 @@ namespace TestMaster.ViewModels
             get => _currentQuestion;
             set => SetProperty(ref _currentQuestion, value);
         }
+        public List<Test> Tests { get; set; } = new();
 
+        private Test _selectedTest;
+        public Test SelectedTest
+        {
+            get => _selectedTest;
+            set => SetProperty(ref _selectedTest, value);
+        }
         public List<IQuestion> Questions { get; set; }
-
         private int _currentQuestionIndex;
 
         public MainViewModel()
@@ -43,16 +49,27 @@ namespace TestMaster.ViewModels
             ResetAnswerCommand = new RelayCommand(_ => ResetAnswer(), _ => IsTestRunning);
 
             IsTestRunning = false;
+
+            using var db = new DatabaseConnectionService();
+            Tests = db.tests
+                .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
+                .ToList();
         }
 
-        private void StartTest()
+        private void StartTest()    
         {
+            if (SelectedTest == null)
+            {
+                MessageBox.Show("Выберите доступный тест из списка!","Внимание");
+                return;
+            }
             using var db = new DatabaseConnectionService();
 
-            Questions = db.questions.Include(q => q.Answers)
-                                    .ToList()
-                                    .Cast<IQuestion>()
-                                    .ToList();
+            Questions = SelectedTest
+                            .Questions
+                            .Cast<IQuestion>()
+                            .ToList();
 
             _currentQuestionIndex = 0;
             CurrentQuestion = Questions[_currentQuestionIndex];
@@ -63,17 +80,6 @@ namespace TestMaster.ViewModels
 
         private void Answer()
         {
-            var selectedIndexes = CurrentQuestion.Answers
-                .Select((a, idx) => new { a.IsSelected, idx })
-                .Where(x => x.IsSelected)
-                .Select(x => x.idx)
-                .ToList();
-
-            bool isCorrect = selectedIndexes.Count == CurrentQuestion.CorrectAnswerIndexes.Count &&
-                             !selectedIndexes.Except(CurrentQuestion.CorrectAnswerIndexes).Any() &&
-                             !CurrentQuestion.CorrectAnswerIndexes.Except(selectedIndexes).Any();
-
-            Console.WriteLine(isCorrect ? "Верно" : "Неверно");
 
             if (_currentQuestionIndex < Questions.Count - 1)
             {
@@ -83,7 +89,32 @@ namespace TestMaster.ViewModels
             else
             {
                 IsTestRunning = false;
-                MessageBox.Show("Тест завершён!");
+
+                int correctAnswersCount = 0;
+                for (int i = 0; i < Questions.Count; i++)
+                {
+                    var question = Questions[i];
+                    var selected = question.Answers
+                        .Select((a, idx) => new { a.IsSelected, idx })
+                        .Where(x => x.IsSelected)
+                        .Select(x => x.idx)
+                        .ToList();
+
+                    bool isCorrect = selected.Count == question.CorrectAnswerIndexes.Count &&
+                                     !selected.Except(question.CorrectAnswerIndexes).Any() &&
+                                     !question.CorrectAnswerIndexes.Except(selected).Any();
+
+                    if (isCorrect)
+                        correctAnswersCount++;
+                }
+
+                int totalQuestions = SelectedTest.Questions.Count;
+                double percent = totalQuestions > 0 ? (double)correctAnswersCount / totalQuestions * 100 : 0;
+
+                MessageBox.Show($"Всего вопросов: {totalQuestions}\n" +
+                    $"Правильных ответов: {correctAnswersCount}\n" +
+                    $"Процент правильных ответов: {percent:F2}%",
+                    "Результат тестирования");
             }
         }
 
