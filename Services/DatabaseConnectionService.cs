@@ -123,6 +123,8 @@ namespace TestMaster.Services
         {
             modelBuilder.Entity<Question>(entity =>
             {
+                entity.ToTable("question");
+
                 entity.HasKey(q => q.Id);
 
                 entity.Property(q => q.Id)
@@ -151,6 +153,8 @@ namespace TestMaster.Services
 
             modelBuilder.Entity<Answer>(entity =>
             {
+                entity.ToTable("answer");
+
                 entity.HasKey(a => a.Id);
 
                 entity.Property(a => a.Id)
@@ -162,13 +166,12 @@ namespace TestMaster.Services
                 entity.Property(a => a.Text)
                     .IsRequired()
                     .HasMaxLength(1000);
-
-                entity.Property(a => a.IsSelected)
-                    .IsRequired();
             });
 
             modelBuilder.Entity<Test>(entity =>
             {
+                entity.ToTable("tests");
+
                 entity.HasKey(t => t.Id);
 
                 entity.Property(t => t.Id)

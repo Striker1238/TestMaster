@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
 namespace TestMaster.Models
@@ -10,6 +11,7 @@ namespace TestMaster.Models
         public int Id { get; set; }
         public int QuestionId { get; set; }
         public string Text { get => text; set { text = value; OnPropertyChanged(); } }
+        [NotMapped]
         public bool IsSelected { get => isSelected; set { isSelected = value; OnPropertyChanged(); } }
         public Question Question { get; set; }
 
