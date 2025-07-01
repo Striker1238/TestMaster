@@ -1,0 +1,69 @@
+﻿<Page x:Class="TestMaster.Views.TestMasterPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TestMaster.ViewModels"
+      mc:Ignorable="d" 
+      Title="TestMaster" Height="600" Width="900"
+      Background="{DynamicResource BaseWhite}">
+    <DockPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="10">
+                <TextBlock Text="Список тестов" FontWeight="Bold" Margin="0,0,0,20"/>
+                <ListBox ItemsSource="{Binding Tests}" 
+                         SelectedItem="{Binding SelectedTest, Mode=TwoWay}" 
+                         Margin="0,0,0,20">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Content="Начать тест" Height="30" FontSize="15"
+                Command="{Binding StartTestCommand}"
+                Style="{DynamicResource AccentButton}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="10">
+                <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding IsTestStarted, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding CurrentQuestion.Text}" 
+                       FontSize="18" 
+                       FontWeight="Bold" 
+                       Margin="0 0 0 20"
+                       TextWrapping="Wrap"/>
+
+                    <ItemsControl ItemsSource="{Binding CurrentQuestion.Answers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <RadioButton GroupName="Answers"
+                                     IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                     Style="{DynamicResource PrimaryRadioButton}"
+                                     Margin="0,0,0,5">
+                                    <TextBlock MaxWidth="400" TextWrapping="Wrap" Text="{Binding Text}"/>
+                                </RadioButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <StackPanel Orientation="Horizontal" 
+                        Margin="0 30 0 0" 
+                        HorizontalAlignment="Center">
+                        <Button Content="Ответить" Height="24" Width="100"
+                Command="{Binding AnswerCommand}"
+                Style="{DynamicResource PrimaryButton}"/>
+
+                        <Button Content="Сбросить" Height="24" Width="100"
+                Command="{Binding ResetAnswerCommand}"
+                Style="{DynamicResource PrimaryButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Page>

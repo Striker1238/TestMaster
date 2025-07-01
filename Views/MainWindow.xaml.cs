@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Navigation;
 using TestMaster.ViewModels;
 
 namespace TestMaster.Views
@@ -11,17 +12,12 @@ namespace TestMaster.Views
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+           
+            MainFrame.Navigate(new TestMasterPage());
         }
-
-        private void ThemeSwitch_Click(object sender, RoutedEventArgs e)
+        private void OpenTestCreator_Click(object sender, RoutedEventArgs e)
         {
-            var dict = new ResourceDictionary();
-            dict.Source = new Uri(isLight ? "/Themes/DarkColorTheme.xaml" : "/Themes/ColorTheme.xaml", UriKind.Relative);
-
-            Application.Current.Resources.MergedDictionaries.Clear();
-            Application.Current.Resources.MergedDictionaries.Add(dict);
-            isLight = !isLight;
+            MainFrame.Navigate(new TestCreatorPage());
         }
     }
 }

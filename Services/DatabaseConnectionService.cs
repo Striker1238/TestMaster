@@ -191,6 +191,15 @@ namespace TestMaster.Services
                     .WithOne(q => q.Test)
                     .HasForeignKey(q => q.TestId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(t => t.NumberQuestions)
+                    .IsRequired();
+
+                entity.Property(t => t.IsShuffleQuestions)
+                    .IsRequired();
+
+                entity.Property(t => t.IsShuffleAnswers)
+                    .IsRequired();
             });
         }
 

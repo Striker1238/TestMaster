@@ -12,4 +12,10 @@ namespace TestMaster.Models
         public List<int> CorrectAnswerIndexes { get; set; }
         public Test Test { get; set; }
     }
+    public enum QuestionType
+    {
+        Single,
+        Multiple,
+        Text
+    }
 }
