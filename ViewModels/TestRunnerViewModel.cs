@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using TestMaster.Models;
+using TestMaster.Models.App;
 
 namespace TestMaster.ViewModels
 {

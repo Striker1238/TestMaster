@@ -7,7 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using TestMaster.Commands;
-using TestMaster.Models;
+using TestMaster.Models.App;
+using TestMaster.Models.DB;
 using TestMaster.Services;
 
 namespace TestMaster.ViewModels
@@ -25,21 +26,21 @@ namespace TestMaster.ViewModels
             set => SetProperty(ref _isTestRunning, value);
         }
 
-        private IQuestion _currentQuestion;
-        public IQuestion CurrentQuestion
+        private Question _currentQuestion;
+        public Question CurrentQuestion
         {
             get => _currentQuestion;
             set => SetProperty(ref _currentQuestion, value);
         }
-        public ObservableCollection<TestDB> Tests { get; set; } = new();
+        public ObservableCollection<Test> Tests { get; set; } = new();
 
-        private TestDB _selectedTest;
-        public TestDB SelectedTest
+        private Test _selectedTest;
+        public Test SelectedTest
         {
             get => _selectedTest;
             set => SetProperty(ref _selectedTest, value);
         }
-        public List<IQuestion> Questions { get; set; }
+        public List<Question> Questions { get; set; }
         private int _currentQuestionIndex;
 
         public MainViewModel()
@@ -51,12 +52,16 @@ namespace TestMaster.ViewModels
             IsTestRunning = false;
 
             using var db = new DatabaseConnectionService();
-            var tests = db.tests
+            var dbTests = db.tests
                 .Include(t => t.Questions)
                 .ThenInclude(q => q.Answers)
                 .ToList();
 
-            Tests = new ObservableCollection<TestDB>(tests);
+            var tests = dbTests
+                .Select(t => ModelMapper.ToAppModel(t))
+                .ToList();
+
+            Tests = new ObservableCollection<Test>(tests);
         }
 
         private void StartTest()    
@@ -68,10 +73,7 @@ namespace TestMaster.ViewModels
             }
             using var db = new DatabaseConnectionService();
 
-            Questions = SelectedTest
-                            .Questions
-                            .Cast<IQuestion>()
-                            .ToList();
+            Questions = SelectedTest.Questions.ToList();
 
             _currentQuestionIndex = 0;
             CurrentQuestion = Questions[_currentQuestionIndex];

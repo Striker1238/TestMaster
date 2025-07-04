@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
-using TestMaster.Models;
+using TestMaster.Models.DB;
 
 namespace TestMaster.Services
 {

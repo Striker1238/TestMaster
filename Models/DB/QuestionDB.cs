@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using TestMaster.Models.App;
 
-namespace TestMaster.Models
+namespace TestMaster.Models.DB
 {
-    public class QuestionDB : IQuestion
+    public class QuestionDB 
     {
         public int Id { get; set; }
         public int TestId { get; set; }
@@ -12,13 +13,6 @@ namespace TestMaster.Models
         public List<AnswerDB> Answers { get; set; }
         public List<int> CorrectAnswerIndexes { get; set; }
         public TestDB Test { get; set; }
-
-        
-    }
-    public enum QuestionType
-    {
-        Single,
-        Multiple,
-        Text
+        public QuestionType Type { get; set; }
     }
 }

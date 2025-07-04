@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using TestMaster.Models.App;
 
-namespace TestMaster.Models
+namespace TestMaster.Models.DB
 {
     public class TestDB
     {

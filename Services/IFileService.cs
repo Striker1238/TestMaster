@@ -1,4 +1,4 @@
-﻿using TestMaster.Models;
+﻿using TestMaster.Models.DB;
 
 namespace TestMaster.Services
 {

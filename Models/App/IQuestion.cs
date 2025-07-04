@@ -4,8 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestMaster.Models.DB;
 
-namespace TestMaster.Models
+namespace TestMaster.Models.App
 {
     public interface IQuestion
     {

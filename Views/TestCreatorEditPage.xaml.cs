@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TestMaster.Models;
+using TestMaster.Models.App;
 using TestMaster.ViewModels;
 
 namespace TestMaster.Views
@@ -25,7 +25,7 @@ namespace TestMaster.Views
     {
         private static readonly Regex _regex = new Regex("^[0-9][0-9]*$");
 
-        public TestCreatorEditPage(TestDB? SelectTest = null)
+        public TestCreatorEditPage(Test? SelectTest = null)
         {
             InitializeComponent();
             DataContext = new TestCreatorEditPageViewModel(SelectTest);

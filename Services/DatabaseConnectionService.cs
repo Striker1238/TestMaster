@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using TestMaster.Models;
+using TestMaster.Models.DB;
 
 namespace TestMaster.Services
 {
@@ -13,6 +13,9 @@ namespace TestMaster.Services
     {
         private readonly string connectionString = "Host=localhost;Port=5432;Database=TestMaster;Username=postgres;Password=postgres";
         public DbSet<TestDB> tests => Set<TestDB>();
+        public DbSet<QuestionDB> questions => Set<QuestionDB>();
+        public DbSet<AnswerDB> answers => Set<AnswerDB>();
+        public DbSet<IndividualTestsDB> individualTests => Set<IndividualTestsDB>();
         //public DbSet<Question> questions => Set<Question>();
 
         public DatabaseConnectionService(string ConnectionString = "")
@@ -24,7 +27,117 @@ namespace TestMaster.Services
             {
                 if (!tests.Any())
                 {
-                    tests.Add(new TestDB
+                    
+                    SaveChanges();
+                }
+            }
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql(connectionString);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<QuestionDB>(entity =>
+            {
+                entity.ToTable("question");
+
+                entity.HasKey(q => q.Id);
+
+                entity.Property(q => q.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(q => q.TestId)
+                    .IsRequired();
+
+                entity.Property(q => q.Text)
+                    .IsRequired()
+                    .HasMaxLength(1000);
+
+                entity.Property(q => q.CorrectAnswerIndexes)
+                    .HasColumnType("integer[]");
+
+                entity.Property(q => q.Type)
+                    .IsRequired();
+
+                entity.HasMany(q => q.Answers)
+                    .WithOne(a => a.Question)
+                    .HasForeignKey(a => a.QuestionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(q => q.Test)
+                    .WithMany(t => t.Questions)
+                    .HasForeignKey(q => q.TestId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<AnswerDB>(entity =>
+            {
+                entity.ToTable("answer");
+
+                entity.HasKey(a => a.Id);
+
+                entity.Property(a => a.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(a => a.QuestionId)
+                    .IsRequired();
+
+                entity.Property(a => a.Text)
+                    .IsRequired()
+                    .HasMaxLength(1000);
+            });
+
+            modelBuilder.Entity<TestDB>(entity =>
+            {
+                entity.ToTable("tests");
+
+                entity.HasKey(t => t.Id);
+
+                entity.Property(t => t.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(t => t.Title)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(t => t.Description)
+                    .HasMaxLength(1000);
+
+                entity.Property(t => t.Category)
+                    .HasMaxLength(200);
+
+                entity.HasMany(t => t.Questions)
+                    .WithOne(q => q.Test)
+                    .HasForeignKey(q => q.TestId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(t => t.NumberQuestions)
+                    .IsRequired();
+
+                entity.Property(t => t.IsShuffleQuestions)
+                    .IsRequired();
+
+                entity.Property(t => t.IsShuffleAnswers)
+                    .IsRequired();
+
+                entity.Property(t => t.CorrectAnswersCount)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<IndividualTestsDB>(entity =>
+            {
+
+            });
+        }
+
+    }
+}
+
+/*
+tests.Add(new TestDB
                     {
                         Title = "Тест по ЯРБ",
                         Description = "Тут у нас описание какое то",
@@ -110,102 +223,4 @@ namespace TestMaster.Services
                             }
                         }
                     });
-                    SaveChanges();
-                }
-            }
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(connectionString);
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<QuestionDB>(entity =>
-            {
-                entity.ToTable("question");
-
-                entity.HasKey(q => q.Id);
-
-                entity.Property(q => q.Id)
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(q => q.TestId)
-                    .IsRequired();
-
-                entity.Property(q => q.Text)
-                    .IsRequired()
-                    .HasMaxLength(1000);
-
-                entity.Property(q => q.CorrectAnswerIndexes)
-                    .HasColumnType("integer[]");
-
-                entity.HasMany(q => q.Answers)
-                    .WithOne(a => a.Question)
-                    .HasForeignKey(a => a.QuestionId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(q => q.Test)
-                    .WithMany(t => t.Questions)
-                    .HasForeignKey(q => q.TestId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<AnswerDB>(entity =>
-            {
-                entity.ToTable("answer");
-
-                entity.HasKey(a => a.Id);
-
-                entity.Property(a => a.Id)
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(a => a.QuestionId)
-                    .IsRequired();
-
-                entity.Property(a => a.Text)
-                    .IsRequired()
-                    .HasMaxLength(1000);
-            });
-
-            modelBuilder.Entity<TestDB>(entity =>
-            {
-                entity.ToTable("tests");
-
-                entity.HasKey(t => t.Id);
-
-                entity.Property(t => t.Id)
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(t => t.Title)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(t => t.Description)
-                    .HasMaxLength(1000);
-
-                entity.Property(t => t.Category)
-                    .HasMaxLength(200);
-
-                entity.HasMany(t => t.Questions)
-                    .WithOne(q => q.Test)
-                    .HasForeignKey(q => q.TestId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.Property(t => t.NumberQuestions)
-                    .IsRequired();
-
-                entity.Property(t => t.IsShuffleQuestions)
-                    .IsRequired();
-
-                entity.Property(t => t.IsShuffleAnswers)
-                    .IsRequired();
-
-                entity.Property(t => t.CorrectAnswersCount)
-                    .IsRequired();
-            });
-        }
-
-    }
-}
+ */

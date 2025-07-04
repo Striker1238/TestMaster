@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TestMaster.Commands;
-using TestMaster.Models;
+using TestMaster.Models.App;
+using TestMaster.Models.DB;
 
 namespace TestMaster.ViewModels
 {
@@ -20,10 +21,10 @@ namespace TestMaster.ViewModels
         public ICommand EditQuestionCommand { get; set; }
         public ICommand SaveEditQuestionCommand { get; set; }
         public ICommand CancelEditQuestionCommand { get; set; }
-        public TestDB CreatedTest { get; set; }
+        public Test CreatedTest { get; set; }
 
-        private QuestionDB selectedQuestion;
-        public QuestionDB SelectedQuestion
+        private Question selectedQuestion;
+        public Question SelectedQuestion
         {
             get => selectedQuestion;
             set => SetProperty(ref selectedQuestion, value);
@@ -34,14 +35,14 @@ namespace TestMaster.ViewModels
             set => SetProperty(ref isEditQuestionVisible, value); 
         }
 
-        public TestCreatorEditPageViewModel(TestDB? selectTest)
+        public TestCreatorEditPageViewModel(Test? selectTest)
         {
             AddNewQuestionCommand = new RelayCommand(_ => CreatedNewQuestion(), _ => true);
             EditQuestionCommand = new RelayCommand(_ => OpenChangesQuestion(), _ => true);
             SaveEditQuestionCommand = new RelayCommand(_ => SaveChangesQuestion(), _ => true);
             CancelEditQuestionCommand = new RelayCommand(_ => CancelChangesQuestion(), _ => true);
 
-            CreatedTest = selectTest ?? new TestDB
+            CreatedTest = selectTest ?? new Test
             {
                 Title = "Новый тест",
                 Category = "Без категории",
@@ -50,17 +51,16 @@ namespace TestMaster.ViewModels
                 CorrectAnswersCount = 0,
                 IsShuffleQuestions = false,
                 IsShuffleAnswers = false,
-                Questions = new List<QuestionDB>()
+                Questions = new ObservableCollection<Question>()
             };
         }
         public void CreatedNewQuestion()
         {
-            var newQuestion = new QuestionDB
+            var newQuestion = new Question
             {
                 Text = "Новый вопрос",
                 Answers = new (),
-                CorrectAnswerIndexes = new (),
-                TestId = CreatedTest.Id
+                CorrectAnswerIndexes = new ()
             };
 
             CreatedTest.Questions.Add(newQuestion);
