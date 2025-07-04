@@ -2,12 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:TestMaster.ViewModels"
+        xmlns:conv="clr-namespace:TestMaster.Services"
         Title="TestMaster" Height="600" Width="900"
         Background="{DynamicResource BaseWhite}">
     <DockPanel>
         <StackPanel Orientation="Horizontal" Background="{DynamicResource PrimaryDark}" Height="40" DockPanel.Dock="Top">
             <TextBlock Text="TestMaster" Foreground="White" FontSize="16" VerticalAlignment="Center" Margin="10,0"/>
-            <Button Content="Test Creator" Click="OpenTestCreator_Click" Margin="0,0,10,0" Padding="5" />
+            <Button Content="Test Creator" Click="OpenTestCreator_Click" Margin="0,0,10,0" Padding="5"
+                    Visibility="{Binding IsOnTestCreatorPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
+            <Button Content="Вернуться к тестам" Click="BackToTests_Click" Margin="0,0,10,0" Padding="5"
+                    Visibility="{Binding IsOnTestCreatorPage, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </StackPanel>
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
     </DockPanel>

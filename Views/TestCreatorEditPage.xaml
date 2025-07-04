@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TestMaster.Views"
+      xmlns:conv="clr-namespace:TestMaster.Services"
       mc:Ignorable="d" 
       Title="TestMaster" Height="600" Width="900"
       Background="{DynamicResource BaseWhite}">
@@ -18,11 +19,11 @@
                     <!-- Название теста -->
                     <TextBlock Text="Название теста:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBox x:Name="TestNameTextBox" Margin="0,0,0,5" />
-                    
+
                     <!-- Категория -->
                     <TextBlock Text="Категория:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBox x:Name="CategoryTextBox" Margin="0,0,0,20" />
-                    
+
                     <!-- Описание теста -->
                     <TextBlock Text="Описание:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBox x:Name="TestDescriptionTextBox" Margin="0,0,0,20" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
@@ -68,9 +69,10 @@
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,10" VerticalAlignment="Top">
                     <!-- Список добавленных вопросов -->
-                    <TextBlock Text="Добавленные вопросы:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="Список вопросов в тесте:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <ListBox x:Name="QuestionsListBox" Height="200" SelectionMode="Single"
-                             ItemsSource="{Binding CreatedTest.Questions}">
+                             ItemsSource="{Binding CreatedTest.Questions}"
+                             SelectedItem="{Binding SelectedQuestion, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border BorderBrush="#DDDDDD" BorderThickness="1" Margin="0,1,0,1">
@@ -93,39 +95,48 @@
                                                 Background="Transparent"
                                                 BorderBrush="Transparent"
                                                 ToolTip="Редактировать вопрос" 
-                                                Command="{Binding EditQuestionCommand}" 
-                                                CommandParameter="{Binding}" />
+                                                Command="{Binding DataContext.EditQuestionCommand, RelativeSource={RelativeSource AncestorType=Page}}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    <Button Content="Добавить вариант ответа" Width="180" Margin="0,8,0,0" 
+                        Command="{Binding AddNewQuestionCommand}"
+                        CommandParameter="{Binding}" />
                     
-                    <!-- Кнопка добавления вопроса -->
-                    <Button x:Name="AddQuestionButton" Content="Добавить вопрос" Width="140" Margin="0,10,0,0"/>
-                    
-                    
-                    
-                    
+                    <StackPanel Margin="10" Visibility="{Binding IsEditQuestionVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Редактирование вопроса" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
+                        <!-- Ответы на выбранный вопрос -->
+                        <StackPanel DataContext="{Binding SelectedQuestion}">
+                            <TextBlock Text="Варианты ответов:" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <ItemsControl ItemsSource="{Binding Answers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                            <CheckBox IsChecked="{Binding IsCorrect, Mode=OneWay}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    Width="220" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                            <Button Content="🗑" Width="24" Height="24" Margin="4,0,0,0" 
+                                                ToolTip="Удалить вариант" 
+                                                Command="{Binding DataContext.DeleteAnswerCommand, RelativeSource={RelativeSource AncestorType=StackPanel, AncestorLevel=2}}"
+                                                CommandParameter="{Binding}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Content="Добавить вариант ответа" Width="180" Margin="0,8,0,0" 
+                                Command="{Binding DataContext.AddAnswerCommand, RelativeSource={RelativeSource AncestorType=StackPanel, AncestorLevel=2}}"
+                                CommandParameter="{Binding}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                            <Button Content="Сохранить" Width="100" Margin="0,0,10,0" Command="{Binding SaveEditQuestionCommand}" />
+                            <Button Content="Отмена" Width="80" Command="{Binding CancelEditQuestionCommand}" />
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
     </DockPanel>
 </Page>
-    
-<!-- 
-    <ItemsControl ItemsSource="{Binding Answers}" Margin="0,8,0,0">
-    <ItemsControl.ItemTemplate>
-        <DataTemplate>
-            <StackPanel Orientation="Horizontal" Margin="0,2">
-                <TextBlock Text="{Binding Text}" VerticalAlignment="Center"/>
-                <Button Content="✏" Width="24" Height="24" Margin="8,0,0,0" ToolTip="Редактировать вариант" Command="{Binding DataContext.EditAnswerCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" />
-                <Button Content="🗑" Width="24" Height="24" Margin="4,0,0,0" ToolTip="Удалить вариант" Command="{Binding DataContext.DeleteAnswerCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" />
-            </StackPanel>
-        </DataTemplate>
-    </ItemsControl.ItemTemplate>
-</ItemsControl>
-<Button Content="Добавить вариант ответа" Width="180" Margin="0,8,0,0" Command="{Binding DataContext.AddAnswerCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" />
-                                    
--->

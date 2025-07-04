@@ -25,7 +25,7 @@ namespace TestMaster.Views
     {
         private static readonly Regex _regex = new Regex("^[0-9][0-9]*$");
 
-        public TestCreatorEditPage(Test? SelectTest = null)
+        public TestCreatorEditPage(TestDB? SelectTest = null)
         {
             InitializeComponent();
             DataContext = new TestCreatorEditPageViewModel(SelectTest);
@@ -34,7 +34,7 @@ namespace TestMaster.Views
                 TestNameTextBox.AppendText(SelectTest.Title);
                 CategoryTextBox.AppendText(SelectTest.Category);
                 TestDescriptionTextBox.AppendText(SelectTest.Description);
-                QuestionsCountTextBox.AppendText(SelectTest.Questions.Count.ToString());
+                QuestionsCountTextBox.AppendText(SelectTest.NumberQuestions.ToString());
                 CorrectAnswersCountTextBox.AppendText(SelectTest.NumberQuestions.ToString());
                 ShuffleQuestionsCheckBox.IsChecked = SelectTest.IsShuffleQuestions;
                 ShuffleAnswersCheckBox.IsChecked = SelectTest.IsShuffleAnswers;

@@ -9,9 +9,6 @@
       Background="{DynamicResource BaseWhite}">
     <Grid>
         <DockPanel LastChildFill="True">
-            <StackPanel Orientation="Horizontal" Background="{DynamicResource PrimaryDark}" Height="40" DockPanel.Dock="Top">
-                <Button Content="Вернуться к тестам" Click ="BackButton_Click" Margin="0,0,10,0" Padding="5"/>
-            </StackPanel>
             <Frame x:Name="TestCreator" NavigationUIVisibility="Hidden"/>
         </DockPanel>
     </Grid>

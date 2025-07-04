@@ -12,16 +12,16 @@ namespace TestMaster.Services
             Converters = { new QuestionJsonConverter() }
         };
 
-        public void Save(Test test, string path)
+        public void Save(TestDB test, string path)
         {
             var json = JsonSerializer.Serialize(test, options);
             File.WriteAllText(path, json);
         }
 
-        public Test Load(string path)
+        public TestDB Load(string path)
         {
             var json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<Test>(json, options);
+            return JsonSerializer.Deserialize<TestDB>(json, options);
         }
     }
 }

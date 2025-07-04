@@ -31,10 +31,10 @@ namespace TestMaster.ViewModels
             get => _currentQuestion;
             set => SetProperty(ref _currentQuestion, value);
         }
-        public List<Test> Tests { get; set; } = new();
+        public ObservableCollection<TestDB> Tests { get; set; } = new();
 
-        private Test _selectedTest;
-        public Test SelectedTest
+        private TestDB _selectedTest;
+        public TestDB SelectedTest
         {
             get => _selectedTest;
             set => SetProperty(ref _selectedTest, value);
@@ -51,10 +51,12 @@ namespace TestMaster.ViewModels
             IsTestRunning = false;
 
             using var db = new DatabaseConnectionService();
-            Tests = db.tests
+            var tests = db.tests
                 .Include(t => t.Questions)
                 .ThenInclude(q => q.Answers)
                 .ToList();
+
+            Tests = new ObservableCollection<TestDB>(tests);
         }
 
         private void StartTest()    

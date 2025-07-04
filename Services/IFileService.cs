@@ -4,7 +4,7 @@ namespace TestMaster.Services
 {
     public interface IFileService
     {
-        void Save(Test test, string path);
-        Test Load(string path);
+        void Save(TestDB test, string path);
+        TestDB Load(string path);
     }
 }
