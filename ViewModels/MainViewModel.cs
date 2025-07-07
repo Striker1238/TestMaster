@@ -25,7 +25,6 @@ namespace TestMaster.ViewModels
             get => _isTestRunning;
             set => SetProperty(ref _isTestRunning, value);
         }
-
         private Question _currentQuestion;
         public Question CurrentQuestion
         {
@@ -33,7 +32,6 @@ namespace TestMaster.ViewModels
             set => SetProperty(ref _currentQuestion, value);
         }
         public ObservableCollection<Test> Tests { get; set; } = new();
-
         private Test _selectedTest;
         public Test SelectedTest
         {
@@ -42,6 +40,12 @@ namespace TestMaster.ViewModels
         }
         public List<Question> Questions { get; set; }
         private int _currentQuestionIndex;
+
+        private string fullName;
+        public string FullName { get => fullName; set => SetProperty(ref fullName, value); }
+
+        private string personnelNumber;
+        public string PersonnelNumber { get => personnelNumber; set => SetProperty(ref personnelNumber, value); }
 
         public MainViewModel()
         {
@@ -71,9 +75,35 @@ namespace TestMaster.ViewModels
                 MessageBox.Show("Выберите доступный тест из списка!","Внимание");
                 return;
             }
+            // Проверяем, указаны ли данные пользователя, если нет то уведомляем и предлагаем
+            // запустить общий тест, если указаны ищем инд. тест под указанные данные, и запускаем его
             using var db = new DatabaseConnectionService();
+            if (!IsValidAndNormalize(ref fullName) || !IsValidAndNormalize(ref personnelNumber))
+            {
+                MessageBox.Show("Вы запустили общий тест, поскольку не указали " +
+                    "индивидуальные данные или допустили в них ошибку", "Внимание!");
+                Questions = SelectedTest.Questions.ToList();
+            }
+            else
+            {
+                var questionIds = db.individualtests
+                    .Where(it =>
+                        it.UserName.ToLower() == FullName.ToLower() &&
+                        it.PersonnelNumber.ToLower() == PersonnelNumber.ToLower() &&
+                        it.TestId == SelectedTest.Id)
+                    .SelectMany(it => it.Questions)
+                    .ToHashSet();
 
-            Questions = SelectedTest.Questions.ToList();
+                Questions = SelectedTest.Questions
+                    .Where(q => questionIds.Contains(q.GetId))
+                    .ToList();
+            }
+
+            if (Questions.Count == 0)
+            {
+                MessageBox.Show("Нет доступных вопросов для запуска теста.", "Внимание");
+                return;
+            }
 
             _currentQuestionIndex = 0;
             CurrentQuestion = Questions[_currentQuestionIndex];
@@ -131,6 +161,19 @@ namespace TestMaster.ViewModels
                     answer.IsSelected = false;
                 }
             }
+        }
+
+        public bool IsValidAndNormalize(ref string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            input = string.Join(" ", input
+                .Trim()
+                .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                .ToLowerInvariant();
+
+            return true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

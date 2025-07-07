@@ -137,8 +137,6 @@ namespace TestMaster.ViewModels
                 return;
             }
             OpenEditPage<TestCreatorEditIndividualPage>(SelectedTest, SelectedIndividualTest);
-            // Открытие страницы редактирования индивидуального теста
-
         }
         private void CreateIndividualTest()
         {
@@ -147,7 +145,6 @@ namespace TestMaster.ViewModels
                 MessageBox.Show("Выберите тест для которого хотите добавить индивидуальный тест!", "Внимание");
                 return;
             }
-            // Открытие страницы создания индивидуального теста
             OpenEditPage<TestCreatorEditIndividualPage>(SelectedTest);
         }
 
@@ -156,7 +153,6 @@ namespace TestMaster.ViewModels
             Page editPage;
             Type[] parameterTypes = parameters.Select(p => p?.GetType() ?? typeof(object)).ToArray();
 
-            // Проверяем, есть ли конструктор с параметром
             var constructor = parameterTypes != null
                 ? typeof(T).GetConstructor(parameterTypes)
                 : typeof(T).GetConstructor(Type.EmptyTypes);
@@ -178,18 +174,16 @@ namespace TestMaster.ViewModels
                 }
             }
 
-            // Поиск активного окна, в котором есть Frame с именем TestCreator
             var mainWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
             if (mainWindow != null)
             {
-                // Поиск Frame по имени TestCreator
+
                 var frame = FindFrameByName(mainWindow, "TestCreator");
                 if (frame != null)
                 {
                     frame.Navigate(editPage);
                     return;
                 }
-                // Если не найден Frame, пробуем стандартную навигацию
                 if (mainWindow is NavigationWindow navWindow)
                 {
                     navWindow.Navigate(editPage);

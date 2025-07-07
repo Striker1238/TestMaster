@@ -15,6 +15,11 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="10">
+                <TextBlock Text="Введите ваше ФИО" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox Margin="0,0,0,10" Text="{Binding FullName}"/>
+                <TextBlock Text="Введите ваш табельный номер" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox Margin="0,0,0,20" Text="{Binding PersonnelNumber}"/>
+
                 <TextBlock Text="Список тестов" FontWeight="Bold" Margin="0,0,0,20"/>
                 <ListBox ItemsSource="{Binding Tests}" 
                          SelectedItem="{Binding SelectedTest, Mode=TwoWay}" 
@@ -26,8 +31,8 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Button Content="Начать тест" Height="30" FontSize="15"
-                Command="{Binding StartTestCommand}"
-                Style="{DynamicResource AccentButton}"/>
+                        Command="{Binding StartTestCommand}"
+                        Style="{DynamicResource AccentButton}"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Margin="10">

@@ -168,10 +168,8 @@ namespace TestMaster.ViewModels
                 db.tests.Add(testDb);
             }
 
-            // 🟢 Этап 1: сохраняем всё, получаем Id ответов
             db.SaveChanges();
 
-            // 🟡 Этап 2: получаем тест с Id всех ответов
             var updatedTest = db.tests
                 .Include(t => t.Questions)
                     .ThenInclude(q => q.Answers)
@@ -188,7 +186,6 @@ namespace TestMaster.ViewModels
                     .ToList();
             }
 
-            // 🟢 Финальное сохранение
             db.SaveChanges();
 
             MessageBox.Show("Тест успешно сохранён!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
