@@ -58,6 +58,7 @@ namespace TestMaster.Services
 
         public static Test ToAppModel(TestDB db) => new Test
         {
+            Id = db.Id,
             Title = db.Title,
             Description = db.Description,
             Category = db.Category,
@@ -71,6 +72,7 @@ namespace TestMaster.Services
 
         public static TestDB ToDbModel(Test app) => new TestDB
         {
+            Id = app.Id,
             Title = app.Title,
             Description = app.Description,
             Category = app.Category,

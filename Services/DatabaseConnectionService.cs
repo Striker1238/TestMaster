@@ -26,7 +26,6 @@ namespace TestMaster.Services
             {
                 if (!tests.Any())
                 {
-                    
                     SaveChanges();
                 }
             }

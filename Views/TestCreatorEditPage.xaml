@@ -65,6 +65,15 @@
                         <CheckBox x:Name="ShuffleQuestionsCheckBox" Content="Перемешивать вопросы" Margin="0,0,20,0"/>
                         <CheckBox x:Name="ShuffleAnswersCheckBox" Content="Перемешивать ответы"/>
                     </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                        <Button Content="Сохранить тест" 
+                                FontSize="11" 
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                Margin="100,5,100,5" 
+                                Command="{Binding DataContext.SaveTestCommand, RelativeSource={RelativeSource AncestorType=Page}}"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,10" VerticalAlignment="Top">
@@ -96,13 +105,24 @@
                                                 BorderBrush="Transparent"
                                                 ToolTip="Редактировать вопрос" 
                                                 Command="{Binding DataContext.EditQuestionCommand, RelativeSource={RelativeSource AncestorType=Page}}"/>
+                                            <Button 
+                                                Content="🗑" 
+                                                FontSize="11" 
+                                                Width="20" 
+                                                Height="20"
+                                                Margin="5,5,5,5"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                ToolTip="Удалить вопрос" 
+                                                Command="{Binding DataContext.DeleteQuestionCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Content="Добавить вариант ответа" Width="180" Margin="0,8,0,0" 
+                    <Button Content="Добавить вопрос" Width="180" Margin="0,8,0,0" 
                         Command="{Binding AddNewQuestionCommand}"
                         CommandParameter="{Binding}" />
                     
@@ -115,12 +135,12 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
-                                            <CheckBox IsChecked="{Binding IsCorrect, Mode=OneWay}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <CheckBox IsChecked="{Binding IsCorrect, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                             <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                     Width="220" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                             <Button Content="🗑" Width="24" Height="24" Margin="4,0,0,0" 
                                                 ToolTip="Удалить вариант" 
-                                                Command="{Binding DataContext.DeleteAnswerCommand, RelativeSource={RelativeSource AncestorType=StackPanel, AncestorLevel=2}}"
+                                                Command="{Binding DataContext.DeleteAnswerCommand}"
                                                 CommandParameter="{Binding}" />
                                         </StackPanel>
                                     </DataTemplate>
@@ -129,10 +149,6 @@
                             <Button Content="Добавить вариант ответа" Width="180" Margin="0,8,0,0" 
                                 Command="{Binding DataContext.AddAnswerCommand, RelativeSource={RelativeSource AncestorType=StackPanel, AncestorLevel=2}}"
                                 CommandParameter="{Binding}" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-                            <Button Content="Сохранить" Width="100" Margin="0,0,10,0" Command="{Binding SaveEditQuestionCommand}" />
-                            <Button Content="Отмена" Width="80" Command="{Binding CancelEditQuestionCommand}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

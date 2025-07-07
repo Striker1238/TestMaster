@@ -29,6 +29,9 @@ namespace TestMaster.ViewModels
         private int countQuestions;
         public int CountQuestions { get => countQuestions; set => SetProperty(ref countQuestions, value); }
 
+        public int countCorrectAnswer;
+        public int CountCorrectAnswer { get => countCorrectAnswer; set => SetProperty(ref countCorrectAnswer, value); }
+
         public IndividualTest SelectIndividualTest { get; set; }
         public ObservableCollection<Question> QuestionsFromSelectTest { get; set; }
 
@@ -44,11 +47,13 @@ namespace TestMaster.ViewModels
             this.SelectIndividualTest = SelectIndividualTest ?? new IndividualTest()
             {
                 Questions = new ObservableCollection<int>(),
-                TestId = SelectTest.Questions.First().TestId
+                TestId = SelectTest.Id
             };
-            
-            using var db = new DatabaseConnectionService();
+
             QuestionsFromSelectTest = SelectTest.Questions;
+            QuestionsFromSelectTest
+                .AsParallel()
+                .ForAll(q => q.IsSelected = SelectIndividualTest?.Questions.Contains(q.GetId) ?? false);
         }
 
         public void Save()
@@ -60,14 +65,14 @@ namespace TestMaster.ViewModels
 
             using var db = new DatabaseConnectionService();
 
-            // 1. Создаём модель для individualtests
             var individualTest = new IndividualTestsDB
             {
-                TestId = SelectIndividualTest.TestId, // Только ID, без привязки к объекту Test!
+                TestId = SelectIndividualTest.TestId,
                 UserName = FullName,
                 PersonnelNumber = PersonnelNumber,
                 CountQuestions = CountQuestions,
-                Questions = SelectIndividualTest.Questions.ToList() 
+                Questions = QuestionsFromSelectTest.Where(q => q.IsSelected).Select(q => q.GetId).ToList()
+
             };
 
             var testExists = db.tests.Any(t => t.Id == SelectIndividualTest.TestId);

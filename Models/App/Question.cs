@@ -17,7 +17,9 @@ namespace TestMaster.Models.App
         public string Text { get => text; set { text = value; OnPropertyChanged(); } }
         public ObservableCollection<Answer> Answers { get; set; }
         public ObservableCollection<int> CorrectAnswerIndexes { get; set; }
-        
+        public bool IsSelected { get; set; }
+        public int GetId { get => Answers.FirstOrDefault().QuestionId; }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

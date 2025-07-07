@@ -20,7 +20,8 @@ namespace TestMaster.Models.App
         private bool isSelected;
         public bool IsSelected { get => isSelected; set { isSelected = value; OnPropertyChanged(); } }
 
-        public bool IsCorrect;
+        private bool isCorrect;
+        public bool IsCorrect { get => isCorrect; set { isCorrect = value; OnPropertyChanged(); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>

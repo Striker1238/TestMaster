@@ -31,7 +31,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Margin="10">
-                <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding IsTestStarted, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding IsTestRunning, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="{Binding CurrentQuestion.Text}" 
                        FontSize="18" 
                        FontWeight="Bold" 

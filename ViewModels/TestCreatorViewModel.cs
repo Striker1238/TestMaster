@@ -218,15 +218,17 @@ namespace TestMaster.ViewModels
         }
         private void LoadIndividualTests()
         {
-            if (SelectedTest == null)
+            if (SelectedTest == null || SelectedTest.Questions == null)
             {
                 IndividualTests.Clear();
                 return;
             }
 
+            int testId = SelectedTest.Id;
+
             using var db = new DatabaseConnectionService();
             var dbIndividualTests = db.individualtests
-                .Where(i => i.TestId == SelectedTest.Questions.First().TestId)
+                .Where(i => i.TestId == testId)
                 .ToList();
 
             IndividualTests = new ObservableCollection<IndividualTest>(dbIndividualTests
