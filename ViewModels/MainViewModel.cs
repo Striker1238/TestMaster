@@ -5,11 +5,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Navigation;
 using TestMaster.Commands;
 using TestMaster.Models.App;
 using TestMaster.Models.DB;
 using TestMaster.Services;
+using TestMaster.Views;
 
 namespace TestMaster.ViewModels
 {
@@ -105,6 +109,16 @@ namespace TestMaster.ViewModels
                 return;
             }
 
+            foreach (var question in Questions)
+            {
+                question.CorrectAnswerIndexes = new ObservableCollection<int>(question.Answers
+                    .Select((a, idx) => new { a, idx })
+                    .Where(x => x.a.IsCorrect)
+                    .Select(x => x.idx)
+                    .ToList());
+            }
+
+
             _currentQuestionIndex = 0;
             CurrentQuestion = Questions[_currentQuestionIndex];
             IsTestRunning = true;
@@ -142,15 +156,62 @@ namespace TestMaster.ViewModels
                         correctAnswersCount++;
                 }
 
-                int totalQuestions = SelectedTest.Questions.Count;
+                int totalQuestions = Questions.Count;
                 double percent = totalQuestions > 0 ? (double)correctAnswersCount / totalQuestions * 100 : 0;
 
                 MessageBox.Show($"Всего вопросов: {totalQuestions}\n" +
                     $"Правильных ответов: {correctAnswersCount}\n" +
                     $"Процент правильных ответов: {percent:F2}%",
                     "Результат тестирования");
+                var result = new Result
+                {
+                    ComplatedTest = SelectedTest,
+                    FullName = FullName,
+                    PersonnelNumber = PersonnelNumber,
+                    CountQuestions = totalQuestions,
+                    CountCorrectAnswer = correctAnswersCount
+                };
+
+                Page editPage = new ResultPage(result);
+
+                var mainWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
+                if (mainWindow != null)
+                {
+
+                    var frame = FindFrameByName(mainWindow, "MainFrame");
+                    if (frame != null)
+                    {
+                        frame.Navigate(editPage);
+                        return;
+                    }
+                    if (mainWindow is NavigationWindow navWindow)
+                    {
+                        navWindow.Navigate(editPage);
+                        return;
+                    }
+                    else if (mainWindow.Content is Frame contentFrame)
+                    {
+                        contentFrame.Navigate(editPage);
+                        return;
+                    }
+                }
             }
         }
+        private Frame? FindFrameByName(DependencyObject parent, string frameName)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is Frame frame && frame.Name == frameName)
+                    return frame;
+                var result = FindFrameByName(child, frameName);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+
 
         private void ResetAnswer()
         {

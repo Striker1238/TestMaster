@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TestMaster.Models.App;
 using TestMaster.ViewModels;
 
 namespace TestMaster.Views
@@ -19,12 +20,22 @@ namespace TestMaster.Views
     /// <summary>
     /// Логика взаимодействия для ResultWindow.xaml
     /// </summary>
-    public partial class ResultWindow : Page
+    public partial class ResultPage : Page
     {
-        public ResultWindow()
+        public ResultPage(Result result)
         {
             InitializeComponent();
-            //DataContext = new MainViewModel();
+            DataContext = new ResultViewModel(result);
+
+            FullNameTextBox.Text = result.FullName;
+            PersonnelNumberTextBox.Text = result.PersonnelNumber;
+            TestTitleTextBox.Text = result.ComplatedTest.Title;
+            TestDescriptionTextBox.Text = result.ComplatedTest.Description;
+            TestCategoryTextBox.Text = result.ComplatedTest.Category;
+            TestCountQuestionsTextBox.Text = result.CountQuestions.ToString();
+            TestCountCorrectAnswerTextBox.Text = result.CountCorrectAnswer.ToString();
+            TestPrecentTextBox.Text = result.CountQuestions > 0 ?
+                ((double)result.CountCorrectAnswer / (double)result.CountCorrectAnswer * 100).ToString("2F") : "0";
         }
     }
 }

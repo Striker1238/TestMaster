@@ -10,21 +10,12 @@ using TestMaster.Models.App;
 
 namespace TestMaster.ViewModels
 {
-    public class TestRunnerViewModel : INotifyPropertyChanged
+    public class ResultViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<IQuestion> Questions { get; set; }
-        public IQuestion CurrentQuestion { get; set; }
 
-        public TestRunnerViewModel()
+        public ResultViewModel(Result result)
         {
-            LoadTest();
-        }
 
-        public void LoadTest()
-        {
-            //var loaded = _testService.LoadTest();
-            //Questions = new ObservableCollection<IQuestion>(loaded);
-            CurrentQuestion = Questions.FirstOrDefault();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
