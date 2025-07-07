@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -10,15 +9,21 @@ namespace TestMaster.Services
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool boolValue)
-                return boolValue ? Visibility.Visible : Visibility.Collapsed;
-            return Visibility.Collapsed;
+            bool boolValue = value is bool b && b;
+            bool invert = parameter != null && parameter.ToString() == "False";
+            if (invert)
+                boolValue = !boolValue;
+            return boolValue ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is Visibility visibility)
-                return visibility == Visibility.Visible;
+            {
+                bool result = visibility == Visibility.Visible;
+                bool invert = parameter != null && parameter.ToString() == "False";
+                return invert ? !result : result;
+            }
             return false;
         }
     }

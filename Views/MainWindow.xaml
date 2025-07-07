@@ -2,68 +2,17 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:TestMaster.ViewModels"
+        xmlns:conv="clr-namespace:TestMaster.Services"
         Title="TestMaster" Height="600" Width="900"
         Background="{DynamicResource BaseWhite}">
     <DockPanel>
         <StackPanel Orientation="Horizontal" Background="{DynamicResource PrimaryDark}" Height="40" DockPanel.Dock="Top">
             <TextBlock Text="TestMaster" Foreground="White" FontSize="16" VerticalAlignment="Center" Margin="10,0"/>
-            <Button Content="Сменить тему" Click="ThemeSwitch_Click" Margin="0,0,10,0" Padding="5"/>
+            <Button Content="Test Creator" Click="OpenTestCreator_Click" Margin="0,0,10,0" Padding="5"
+                    Visibility="{Binding IsOnTestCreatorPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
+            <Button Content="Вернуться к тестам" Click="BackToTests_Click" Margin="0,0,10,0" Padding="5"
+                    Visibility="{Binding IsOnTestCreatorPage, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </StackPanel>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="3*"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Margin="10">
-                <TextBlock Text="Список тестов" FontWeight="Bold" Margin="0,0,0,20"/>
-                <ListBox ItemsSource="{Binding Tests}" SelectedItem="{Binding SelectedTest, Mode=TwoWay}" Margin="0,0,0,20">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Title}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Button Content="Начать тест" Height="30" FontSize="15"
-                        Command="{Binding StartTestCommand}"
-                        Style="{DynamicResource AccentButton}"/>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Margin="10">
-                <StackPanel Margin="20" VerticalAlignment="Center" Visibility="{Binding IsTestStarted, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="{Binding CurrentQuestion.Text}" 
-                               FontSize="18" 
-                               FontWeight="Bold" 
-                               Margin="0 0 0 20"
-                               TextWrapping="Wrap"/>
-
-                    <ItemsControl ItemsSource="{Binding CurrentQuestion.Answers}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <RadioButton GroupName="Answers"
-                                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                             Style="{DynamicResource PrimaryRadioButton}"
-                                             Margin="0,0,0,5">
-                                    <TextBlock MaxWidth="400" TextWrapping="Wrap" Text="{Binding Text}"/>
-                                </RadioButton>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                    <StackPanel Orientation="Horizontal" 
-                                Margin="0 30 0 0" 
-                                HorizontalAlignment="Center">
-                        <Button Content="Ответить" Height="24" Width="100"
-                        Command="{Binding AnswerCommand}"
-                        Style="{DynamicResource PrimaryButton}"/>
-
-                        <Button Content="Сбросить" Height="24" Width="100"
-                        Command="{Binding ResetAnswerCommand}"
-                        Style="{DynamicResource PrimaryButton}"/>
-                    </StackPanel>
-                </StackPanel>
-            </StackPanel>
-        </Grid>
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
     </DockPanel>
 </Window>

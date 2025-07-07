@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using TestMaster.Models;
+using TestMaster.Models.App;
 
 namespace TestMaster.Services
 {
