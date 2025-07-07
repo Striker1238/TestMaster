@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +36,13 @@ namespace TestMaster.ViewModels
         public Test SelectedTest
         {
             get => _selectedTest;
-            set => SetProperty(ref _selectedTest, value);
+            set
+            {
+                if (SetProperty(ref _selectedTest, value))
+                {
+                    LoadIndividualTests();
+                }
+            }
         }
         public ObservableCollection<Test> Tests { get; set; } = new();
 
@@ -92,43 +99,84 @@ namespace TestMaster.ViewModels
                 return;
             }
 
-            OpenEditPage(false);
+            OpenEditPage<TestCreatorEditPage>(SelectedTest);
         }
         public void CreateNewTest()
         {
-            OpenEditPage(true);
+            OpenEditPage<TestCreatorEditPage>();
         }
 
         // ===== TestCommands =====
         private void DeleteIndividualTest()
         {
-            if (SelectedIndividualTest == null)
+            if (SelectedIndividualTest == null || SelectedTest == null)
             {
                 MessageBox.Show("Выберите индивидуальный тест для удаления!", "Внимание");
                 return;
             }
             using var db = new DatabaseConnectionService();
-            db.individualTests.Remove(ModelMapper.ToDbModel(SelectedIndividualTest));
+            var existingEntity = db.individualtests
+                .FirstOrDefault(it => it.PersonnelNumber == SelectedIndividualTest.PersonnelNumber 
+                    && it.UserName == SelectedIndividualTest.UserName);
+            if (existingEntity == null)
+            {
+                MessageBox.Show("Не удалось найти тест для удаления в базе данных", "Ошибка");
+                return;
+            }
+
+            db.individualtests.Remove(existingEntity);
+            db.SaveChanges();
+
             IndividualTests.Remove(SelectedIndividualTest);
         }
         private void EditIndividualTest()
         {
-            if (SelectedIndividualTest == null)
+            if (SelectedIndividualTest == null || SelectedTest == null)
             {
                 MessageBox.Show("Выберите индивидуальный тест для редактирования!", "Внимание");
                 return;
             }
+            OpenEditPage<TestCreatorEditIndividualPage>(SelectedTest, SelectedIndividualTest);
             // Открытие страницы редактирования индивидуального теста
 
         }
         private void CreateIndividualTest()
         {
+            if (SelectedTest == null)
+            {
+                MessageBox.Show("Выберите тест для которого хотите добавить индивидуальный тест!", "Внимание");
+                return;
+            }
             // Открытие страницы создания индивидуального теста
+            OpenEditPage<TestCreatorEditIndividualPage>(SelectedTest);
         }
 
-        private void OpenEditPage(bool isForNewTest)
+        private void OpenEditPage<T>(params object[] parameters) where T : Page
         {
-            var editPage = new TestCreatorEditPage(isForNewTest?null: SelectedTest);
+            Page editPage;
+            Type[] parameterTypes = parameters.Select(p => p?.GetType() ?? typeof(object)).ToArray();
+
+            // Проверяем, есть ли конструктор с параметром
+            var constructor = parameterTypes != null
+                ? typeof(T).GetConstructor(parameterTypes)
+                : typeof(T).GetConstructor(Type.EmptyTypes);
+
+            if (constructor != null)
+            {
+                editPage = (Page)constructor.Invoke(parameters ?? Array.Empty<object>());
+            }
+            else
+            {
+                try
+                {
+                    editPage = Activator.CreateInstance<T>();
+                }
+                catch (MissingMethodException)
+                {
+                    throw new InvalidOperationException(
+                        $"Тип {typeof(T).Name} не имеет подходящего конструктора.");
+                }
+            }
 
             // Поиск активного окна, в котором есть Frame с именем TestCreator
             var mainWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
@@ -168,7 +216,25 @@ namespace TestMaster.ViewModels
             }
             return null;
         }
+        private void LoadIndividualTests()
+        {
+            if (SelectedTest == null)
+            {
+                IndividualTests.Clear();
+                return;
+            }
 
+            using var db = new DatabaseConnectionService();
+            var dbIndividualTests = db.individualtests
+                .Where(i => i.TestId == SelectedTest.Questions.First().TestId)
+                .ToList();
+
+            IndividualTests = new ObservableCollection<IndividualTest>(dbIndividualTests
+                .Select(ModelMapper.ToAppModel)
+                .ToList());
+
+            OnPropertyChanged(nameof(IndividualTests));
+        }
 
 
 

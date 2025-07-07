@@ -88,6 +88,8 @@ namespace TestMaster.Services
             TestId = db.TestId,
             PersonnelNumber = db.PersonnelNumber,
             UserName = db.UserName,
+            CountQuestions = db.CountQuestions,
+            Questions = new ObservableCollection<int>(db.Questions ?? new List<int>())
         };
 
         public static IndividualTestsDB ToDbModel(IndividualTest app)
@@ -98,7 +100,9 @@ namespace TestMaster.Services
                 PersonnelNumber = app.PersonnelNumber,
                 UserName = app.UserName,
                 Test = db.tests.Find(app.TestId) ?? new TestDB(),
-                TestId = app.TestId
+                TestId = app.TestId,
+                CountQuestions = app.CountQuestions,
+                Questions = app.Questions?.ToList() ?? new List<int>()
             };
         }
     }

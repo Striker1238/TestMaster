@@ -15,8 +15,7 @@ namespace TestMaster.Services
         public DbSet<TestDB> tests => Set<TestDB>();
         public DbSet<QuestionDB> questions => Set<QuestionDB>();
         public DbSet<AnswerDB> answers => Set<AnswerDB>();
-        public DbSet<IndividualTestsDB> individualTests => Set<IndividualTestsDB>();
-        //public DbSet<Question> questions => Set<Question>();
+        public DbSet<IndividualTestsDB> individualtests => Set<IndividualTestsDB>();
 
         public DatabaseConnectionService(string ConnectionString = "")
         {
@@ -129,10 +128,37 @@ namespace TestMaster.Services
 
             modelBuilder.Entity<IndividualTestsDB>(entity =>
             {
+                entity.ToTable("individualtests");
 
+                entity.HasKey(i => i.Id);
+
+                entity.Property(i => i.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(i => i.UserName)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(i => i.PersonnelNumber)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(i => i.CountQuestions)
+                    .IsRequired();
+
+                entity.Property(i => i.Questions)
+                    .IsRequired();
+
+                entity.Property(i => i.TestId)
+                    .HasColumnType("integer[]");
+
+                entity.HasOne(i => i.Test)
+                    .WithMany()
+                    .HasForeignKey(i => i.TestId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
-        }
 
+        }
     }
 }
 

@@ -13,5 +13,7 @@ namespace TestMaster.Models.DB
         public TestDB Test { get; set; }
         public string UserName { get; set; }
         public string PersonnelNumber { get; set; }
+        public int CountQuestions { get; set; }
+        public List<int> Questions { get; set; }
     }
 }

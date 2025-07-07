@@ -25,10 +25,11 @@ namespace TestMaster.Views
     {
         private static readonly Regex _regex = new Regex("^[0-9][0-9]*$");
 
-        public TestCreatorEditPage(Test? SelectTest = null)
+        public TestCreatorEditPage() : this(null) { } 
+        public TestCreatorEditPage(Test? SelectTest)
         {
             InitializeComponent();
-            DataContext = new TestCreatorEditPageViewModel(SelectTest);
+            DataContext = new EditPageViewModel(SelectTest);
             if(SelectTest is not null)
             {
                 TestNameTextBox.AppendText(SelectTest.Title);

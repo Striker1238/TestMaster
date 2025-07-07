@@ -15,7 +15,7 @@ using TestMaster.Models.DB;
 
 namespace TestMaster.ViewModels
 {
-    class TestCreatorEditPageViewModel : INotifyPropertyChanged
+    class EditPageViewModel : INotifyPropertyChanged
     {
         public ICommand AddNewQuestionCommand { get; set; }
         public ICommand EditQuestionCommand { get; set; }
@@ -35,7 +35,7 @@ namespace TestMaster.ViewModels
             set => SetProperty(ref isEditQuestionVisible, value); 
         }
 
-        public TestCreatorEditPageViewModel(Test? selectTest)
+        public EditPageViewModel(Test? selectTest)
         {
             AddNewQuestionCommand = new RelayCommand(_ => CreatedNewQuestion(), _ => true);
             EditQuestionCommand = new RelayCommand(_ => OpenChangesQuestion(), _ => true);
