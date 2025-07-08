@@ -18,20 +18,21 @@
                 <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10,0,10,0" VerticalAlignment="Top">
                     <!-- Название теста -->
                     <TextBlock Text="Название теста:" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="TestNameTextBox" Margin="0,0,0,5" />
+                    <TextBox x:Name="TestNameTextBox" Text="{Binding CreatedTest.Title}" Margin="0,0,0,5" />
 
                     <!-- Категория -->
                     <TextBlock Text="Категория:" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="CategoryTextBox" Margin="0,0,0,20" />
+                    <TextBox x:Name="CategoryTextBox" Text="{Binding CreatedTest.Category}" Margin="0,0,0,20" />
 
                     <!-- Описание теста -->
                     <TextBlock Text="Описание:" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="TestDescriptionTextBox" Margin="0,0,0,20" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox x:Name="TestDescriptionTextBox" Text="{Binding CreatedTest.Description}" Margin="0,0,0,20" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
 
                     <!-- Количество вопросов на прохождение -->
                     <TextBlock Text="Количество вопросов на одно прохождение:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                         <TextBox x:Name="QuestionsCountTextBox" 
+                                 Text="{Binding CreatedTest.NumberQuestions}"
                                  Width="60" 
                                  ToolTip="Укажите число — столько вопросов будет выбрано случайным образом для одного прохождения теста"
                                  VerticalAlignment="Center"
@@ -46,6 +47,7 @@
                     <TextBlock Text="Минимальное количество правильных ответов:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                         <TextBox x:Name="CorrectAnswersCountTextBox" 
+                                 Text="{Binding CreatedTest.CorrectAnswersCount}"
                                  Width="60" 
                                  ToolTip="Укажите число — минимальное количество правильных ответов для успешного прохождения теста&#x0a;по умолчанию 0 — пройти тест без ошибок"
                                  VerticalAlignment="Center"
@@ -62,8 +64,8 @@
                     <TextBlock Text="Дополнительные настройки:" FontWeight="Bold" Margin="0,10,0,5"/>
                     <!-- Настройки перемешивания -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <CheckBox x:Name="ShuffleQuestionsCheckBox" Content="Перемешивать вопросы" Margin="0,0,20,0"/>
-                        <CheckBox x:Name="ShuffleAnswersCheckBox" Content="Перемешивать ответы"/>
+                        <CheckBox x:Name="ShuffleQuestionsCheckBox" IsChecked="{Binding CreatedTest.IsShuffleQuestions}" Content="Перемешивать вопросы" Margin="0,0,20,0"/>
+                        <CheckBox x:Name="ShuffleAnswersCheckBox" IsChecked="{Binding CreatedTest.IsShuffleAnswers}" Content="Перемешивать ответы"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical" Margin="0,0,0,10">

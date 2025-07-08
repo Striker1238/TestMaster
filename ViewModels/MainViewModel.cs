@@ -109,8 +109,30 @@ namespace TestMaster.ViewModels
                 return;
             }
 
+            // Перемешивание вопросов
+            if (SelectedTest.IsShuffleQuestions)
+            {
+                Questions = Questions.OrderBy(_ => Guid.NewGuid()).ToList();
+            }
+            // Ограничение количества вопросов
+            if (SelectedTest.NumberQuestions > 0 && Questions.Count > SelectedTest.NumberQuestions)
+            {
+                Questions = Questions.Take(SelectedTest.NumberQuestions).ToList();
+            }
+
+
             foreach (var question in Questions)
             {
+                if (SelectedTest.IsShuffleAnswers)
+                {
+                    var shuffledAnswers = question.Answers
+                        .Select((a, i) => new { Answer = a, OriginalIndex = i })
+                        .OrderBy(_ => Guid.NewGuid())
+                        .ToList();
+
+                    question.Answers = new ObservableCollection<Answer>(shuffledAnswers.Select(x => x.Answer).ToList());
+                }
+
                 question.CorrectAnswerIndexes = new ObservableCollection<int>(question.Answers
                     .Select((a, idx) => new { a, idx })
                     .Where(x => x.a.IsCorrect)

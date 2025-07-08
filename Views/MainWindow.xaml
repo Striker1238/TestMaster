@@ -10,7 +10,7 @@
             <TextBlock Text="TestMaster" Foreground="White" FontSize="16" VerticalAlignment="Center" Margin="10,0"/>
             <Button Content="Test Creator" Click="OpenTestCreator_Click" Margin="0,0,10,0" Padding="5"
                     Visibility="{Binding IsOnTestCreatorPage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
-            <Button Content="Вернуться к тестам" Click="BackToTests_Click" Margin="0,0,10,0" Padding="5"
+            <Button Content="Назад" Click="BackToTests_Click" Margin="0,0,10,0" Padding="5"
                     Visibility="{Binding IsOnTestCreatorPage, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </StackPanel>
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>

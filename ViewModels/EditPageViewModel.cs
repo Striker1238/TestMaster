@@ -24,7 +24,6 @@ namespace TestMaster.ViewModels
 
         public ICommand AddAnswerCommand { get; set; }
         public ICommand DeleteAnswerCommand { get; set; }
-
         public ICommand SaveTestCommand { get; set; }
 
         public Test CreatedTest { get; set; }
@@ -43,6 +42,7 @@ namespace TestMaster.ViewModels
             set => SetProperty(ref isEditQuestionVisible, value);
         }
 
+
         public EditPageViewModel(Test? selectTest)
         {
             AddNewQuestionCommand = new RelayCommand(_ => CreatedNewQuestion(), _ => true);
@@ -54,6 +54,7 @@ namespace TestMaster.ViewModels
 
             SaveTestCommand = new RelayCommand(_ => SaveTest(), _ => true);
 
+            
             CreatedTest = selectTest ?? new Test
             {
                 Title = "Новый тест",
@@ -65,7 +66,9 @@ namespace TestMaster.ViewModels
                 IsShuffleAnswers = false,
                 Questions = new ObservableCollection<Question>()
             };
+
         }
+
 
         public void CreatedNewQuestion()
         {
@@ -128,6 +131,7 @@ namespace TestMaster.ViewModels
                 return;
             }
 
+
             using var db = new DatabaseConnectionService();
 
             TestDB testDb;
@@ -150,6 +154,7 @@ namespace TestMaster.ViewModels
                 testDb.IsShuffleQuestions = CreatedTest.IsShuffleQuestions;
                 testDb.IsShuffleAnswers = CreatedTest.IsShuffleAnswers;
                 testDb.Questions = CreatedTest.Questions.Select(ModelMapper.ToDbModel).ToList();
+                
             }
             else
             {

@@ -34,8 +34,10 @@ namespace TestMaster.Views
             TestCategoryTextBox.Text = result.ComplatedTest.Category;
             TestCountQuestionsTextBox.Text = result.CountQuestions.ToString();
             TestCountCorrectAnswerTextBox.Text = result.CountCorrectAnswer.ToString();
-            TestPrecentTextBox.Text = result.CountQuestions > 0 ?
-                ((double)result.CountCorrectAnswer / (double)result.CountCorrectAnswer * 100).ToString("2F") : "0";
+            TestPrecentTextBox.Text = result.CountQuestions > 0
+                ? ((double)result.CountCorrectAnswer / result.CountQuestions * 100).ToString("F2") + "%"
+                : "0%";
+
         }
     }
 }

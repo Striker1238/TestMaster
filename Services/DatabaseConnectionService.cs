@@ -17,10 +17,9 @@ namespace TestMaster.Services
         public DbSet<AnswerDB> answers => Set<AnswerDB>();
         public DbSet<IndividualTestsDB> individualtests => Set<IndividualTestsDB>();
 
-        public DatabaseConnectionService(string ConnectionString = "")
+        public DatabaseConnectionService()
         {
-            if (!string.IsNullOrWhiteSpace(ConnectionString))
-                this.connectionString = ConnectionString;
+            connectionString = SettingsService.GetString("Database:ConnectionString");
 
             if (Database.EnsureCreated())
             {
