@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace TestMaster.Models.App
 {
@@ -12,8 +14,10 @@ namespace TestMaster.Models.App
         public string FullName { get; set; }
         public string PersonnelNumber { get; set; }
         public Test ComplatedTest { get; set; }
+        public ObservableCollection<QuestionResult> QuestionResult { get; set; }
         public int CountQuestions { get; set; }
         public int CountCorrectAnswer { get; set; }
+        public bool IsSuccessfully { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -29,8 +29,6 @@ namespace TestMaster.ViewModels
         private int countQuestions;
         public int CountQuestions { get => countQuestions; set => SetProperty(ref countQuestions, value); }
 
-        public int countCorrectAnswer;
-        public int CountCorrectAnswer { get => countCorrectAnswer; set => SetProperty(ref countCorrectAnswer, value); }
 
         public IndividualTest SelectIndividualTest { get; set; }
         public ObservableCollection<Question> QuestionsFromSelectTest { get; set; }
@@ -51,9 +49,25 @@ namespace TestMaster.ViewModels
             };
 
             QuestionsFromSelectTest = SelectTest.Questions;
-            QuestionsFromSelectTest
-                .AsParallel()
-                .ForAll(q => q.IsSelected = SelectIndividualTest?.Questions.Contains(q.GetId) ?? false);
+            foreach (var question in QuestionsFromSelectTest)
+            {
+                question.IsSelected = SelectIndividualTest?.Questions.Contains(question.GetId) ?? false;
+                question.PropertyChanged += Question_PropertyChanged;
+            }
+
+            UpdateCountQuestions();
+        }
+        private void Question_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Question.IsSelected))
+            {
+                UpdateCountQuestions();
+            }
+        }
+
+        private void UpdateCountQuestions()
+        {
+            CountQuestions = QuestionsFromSelectTest.Count(q => q.IsSelected);
         }
 
         public void Save()

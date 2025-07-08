@@ -37,22 +37,14 @@
                 </StackPanel>
                 <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
                     <TextBlock Text="Количество вопросов:" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,5"/>
-                    <TextBox x:Name="CountQuestionTextBox" 
-                             Text="{Binding CountQuestions, UpdateSourceTrigger=LostFocus}"
+                    <TextBlock x:Name="CountQuestionTextBox" 
+                             Text="{Binding CountQuestions}"
                              FontWeight="Bold" 
                              Margin="20,5,0,5" 
                              Width="50" 
                              VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
-                    <TextBlock Text="Минимальное число ответов:" VerticalAlignment="Center" FontWeight="Bold" Margin="5,0,0,5"/>
-                    <TextBox x:Name="CountCorrectAnswerTextBox" 
-                             Text="{Binding CountCorrectAnswer, UpdateSourceTrigger=LostFocus}"
-                             FontWeight="Bold" 
-                             Margin="20,5,0,5" 
-                             Width="50" 
-                             VerticalAlignment="Center"/>
-                </StackPanel>
+
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Content="Сохранить" Command="{Binding SaveIndividualTestCommand}" Margin="0,0,5,0"/>

@@ -66,7 +66,7 @@ namespace TestMaster.ViewModels
                 .ToList();
 
             var tests = dbTests
-                .Select(t => ModelMapper.ToAppModel(t))
+                .Select(ModelMapper.ToAppModel)
                 .ToList();
 
             Tests = new ObservableCollection<Test>(tests);
@@ -90,17 +90,21 @@ namespace TestMaster.ViewModels
             }
             else
             {
-                var questionIds = db.individualtests
+
+                var individualTests = db.individualtests.AsEnumerable()
                     .Where(it =>
                         it.UserName.ToLower() == FullName.ToLower() &&
                         it.PersonnelNumber.ToLower() == PersonnelNumber.ToLower() &&
-                        it.TestId == SelectedTest.Id)
+                        it.TestId == SelectedTest.Id).ToList();
+
+                var questionIds = individualTests
                     .SelectMany(it => it.Questions)
                     .ToHashSet();
 
                 Questions = SelectedTest.Questions
                     .Where(q => questionIds.Contains(q.GetId))
                     .ToList();
+
             }
 
             if (Questions.Count == 0)
@@ -150,6 +154,13 @@ namespace TestMaster.ViewModels
 
         private void Answer()
         {
+            var selectedAnswers = CurrentQuestion.Answers.Where(a => a.IsSelected).ToList();
+
+            if (selectedAnswers.Count == 0)
+            {
+                MessageBox.Show("Пожалуйста, выберите хотя бы один ответ перед продолжением.", "Ответ не выбран");
+                return;
+            }
 
             if (_currentQuestionIndex < Questions.Count - 1)
             {
@@ -161,6 +172,7 @@ namespace TestMaster.ViewModels
                 IsTestRunning = false;
 
                 int correctAnswersCount = 0;
+                var questionResult = new ObservableCollection<QuestionResult>();
                 for (int i = 0; i < Questions.Count; i++)
                 {
                     var question = Questions[i];
@@ -176,23 +188,26 @@ namespace TestMaster.ViewModels
 
                     if (isCorrect)
                         correctAnswersCount++;
+
+                    questionResult.Add(new QuestionResult { Text = question.Text, IsCorrect = isCorrect });
                 }
 
                 int totalQuestions = Questions.Count;
-                double percent = totalQuestions > 0 ? (double)correctAnswersCount / totalQuestions * 100 : 0;
 
-                MessageBox.Show($"Всего вопросов: {totalQuestions}\n" +
-                    $"Правильных ответов: {correctAnswersCount}\n" +
-                    $"Процент правильных ответов: {percent:F2}%",
-                    "Результат тестирования");
                 var result = new Result
                 {
                     ComplatedTest = SelectedTest,
                     FullName = FullName,
                     PersonnelNumber = PersonnelNumber,
                     CountQuestions = totalQuestions,
-                    CountCorrectAnswer = correctAnswersCount
+                    CountCorrectAnswer = correctAnswersCount,
+                    QuestionResult = questionResult,
+                    IsSuccessfully = SelectedTest.CorrectAnswersCount <= 0 || SelectedTest.CorrectAnswersCount >= totalQuestions
+                    ? correctAnswersCount == totalQuestions 
+                    : correctAnswersCount >= SelectedTest.CorrectAnswersCount
                 };
+
+
 
                 Page editPage = new ResultPage(result);
 

@@ -39,5 +39,11 @@ namespace TestMaster.Views
                 : "0%";
 
         }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NavigationService.CanGoBack)
+                NavigationService.GoBack();
+        }
     }
 }

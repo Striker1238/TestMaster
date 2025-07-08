@@ -80,7 +80,12 @@
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,10" VerticalAlignment="Top">
                     <!-- Список добавленных вопросов -->
-                    <TextBlock Text="Список вопросов в тесте:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Список вопросов в тесте:" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <TextBlock Text="Всего вопросов:" FontWeight="Bold" Margin="140,0,0,5"/>
+                        <TextBlock Text="{Binding CreatedTest.Questions.Count}" FontWeight="Bold" Margin="10,0,0,5"/>
+                    </StackPanel>
+                    
                     <ListBox x:Name="QuestionsListBox" Height="200" SelectionMode="Single"
                              ItemsSource="{Binding CreatedTest.Questions}"
                              SelectedItem="{Binding SelectedQuestion, Mode=TwoWay}">
@@ -89,12 +94,14 @@
                                 <Border BorderBrush="#DDDDDD" BorderThickness="1" Margin="0,1,0,1">
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
-                                            <TextBlock Text="{Binding Text}" 
+                                            <TextBox Text="{Binding Text}" 
                                                        Margin="5,5,0,5"
                                                        FontSize="11" 
                                                        VerticalAlignment="Center"
                                                        TextWrapping="Wrap" 
-                                                       Width="339"/>
+                                                       Width="311"
+                                                       Background="Transparent"
+                                                     BorderBrush="Transparent"/>
                                             <Button 
                                                 Content="✏" 
                                                 FontSize="11" 
@@ -142,7 +149,7 @@
                                                     Width="220" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                             <Button Content="🗑" Width="24" Height="24" Margin="4,0,0,0" 
                                                 ToolTip="Удалить вариант" 
-                                                Command="{Binding DataContext.DeleteAnswerCommand}"
+                                                Command="{Binding DataContext.DeleteAnswerCommand, RelativeSource={RelativeSource AncestorType=StackPanel, AncestorLevel=4}}"
                                                 CommandParameter="{Binding}" />
                                         </StackPanel>
                                     </DataTemplate>
