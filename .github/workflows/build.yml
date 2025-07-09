@@ -1,0 +1,54 @@
+name: Build and Release TestMaster
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: TestMaster.sln
+      Build_Project: TestMaster/TestMaster.csproj
+      Output_Dir: publish
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore NuGet packages
+      run: msbuild $env:Solution_Name /t:Restore
+
+    - name: Build application
+      run: msbuild $env:Build_Project /p:Configuration=Release
+
+    - name: Create publish folder
+      run: |
+        mkdir $env:Output_Dir
+        msbuild $env:Build_Project /p:Configuration=Release /p:OutputPath=$env:Output_Dir\
+
+    - name: Zip publish folder
+      run: Compress-Archive -Path "$env:Output_Dir\*" -DestinationPath "TestMaster.zip"
+
+    - name: Create GitHub Release (push or tag)
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
+        files: TestMaster.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
