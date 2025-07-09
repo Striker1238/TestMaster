@@ -17,10 +17,9 @@ namespace TestMaster.Services
         public DbSet<AnswerDB> answers => Set<AnswerDB>();
         public DbSet<IndividualTestsDB> individualtests => Set<IndividualTestsDB>();
 
-        public DatabaseConnectionService(string ConnectionString = "")
+        public DatabaseConnectionService()
         {
-            if (!string.IsNullOrWhiteSpace(ConnectionString))
-                this.connectionString = ConnectionString;
+            connectionString = SettingsService.GetString("Database:ConnectionString");
 
             if (Database.EnsureCreated())
             {
@@ -33,7 +32,8 @@ namespace TestMaster.Services
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(connectionString);
+            //optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseSqlite(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

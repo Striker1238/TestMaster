@@ -1,14 +1,124 @@
-﻿<Page x:Class="TestMaster.Views.ResultWindow"
+﻿<Page x:Class="TestMaster.Views.ResultPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:TestMaster.Views"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="ResultWindow">
+      Title="TestMaster" Height="600" Width="900"
+      Background="{DynamicResource BaseWhite}">
 
-    <Grid>
-        
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок страницы -->
+        <TextBlock Text="Результаты тестирования"
+                   FontSize="28"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource PrimaryDark}"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,20"/>
+
+        <!-- Основное содержимое -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая панель: данные -->
+            <StackPanel Grid.Column="0" Margin="10">
+                <Border BorderBrush="{DynamicResource PrimaryDark}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Персональные данные" FontSize="20" FontWeight="Bold" Margin="0,0,0,10" Foreground="{DynamicResource PrimaryDark}"/>
+                        <TextBlock Text="ФИО:" FontWeight="Bold"/>
+                        <TextBlock x:Name="FullNameTextBox" Margin="0,0,0,10"/>
+                        <TextBlock Text="Табельный номер:" FontWeight="Bold"/>
+                        <TextBlock x:Name="PersonnelNumberTextBox"/>
+                    </StackPanel>
+                </Border>
+
+                <Border BorderBrush="{DynamicResource PrimaryDark}" BorderThickness="1" CornerRadius="8" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Информация о тесте" FontSize="20" FontWeight="Bold" Margin="0,0,0,10" Foreground="{DynamicResource PrimaryDark}"/>
+                        <TextBlock Text="Название теста:" FontWeight="Bold"/>
+                        <TextBlock x:Name="TestTitleTextBox" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        <TextBlock Text="Описание:" FontWeight="Bold"/>
+                        <TextBlock x:Name="TestDescriptionTextBox" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        <TextBlock Text="Категория:" FontWeight="Bold"/>
+                        <TextBlock x:Name="TestCategoryTextBox"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Правая панель: результат -->
+            <StackPanel Grid.Column="1" Margin="10">
+                <Border BorderBrush="{DynamicResource PrimaryDark}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Результаты теста" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryDark}" Margin="0,0,0,10"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="Всего вопросов: " FontWeight="Bold"/>
+                            <TextBlock x:Name="TestCountQuestionsTextBox" Margin="5,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                            <TextBlock Text="Правильных ответов: " FontWeight="Bold"/>
+                            <TextBlock x:Name="TestCountCorrectAnswerTextBox" Margin="5,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="Процент: " FontWeight="Bold"/>
+                            <TextBlock x:Name="TestPrecentTextBox" Margin="5,0"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding TestPassedText}" FontWeight="Bold" 
+                               Foreground="{Binding TestPassedBrush}"
+                               HorizontalAlignment="Center"
+                               FontSize="16" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border BorderBrush="{DynamicResource AccentMint}" BorderThickness="1" CornerRadius="8" Padding="10" Background="#F9F9F9">
+                    <StackPanel>
+                        <TextBlock Text="Ответы на вопросы" FontWeight="Bold" FontSize="18" Foreground="{DynamicResource PrimaryDark}" Margin="0,0,0,10"/>
+                        <ListBox ItemsSource="{Binding result.QuestionResult}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Height="110">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="18" 
+                                            FontWeight="Bold" 
+                                            Text="{Binding IsCorrectIcon}" 
+                                            Foreground="{Binding IconColor}" 
+                                            Margin="10,0,0,0"/>
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="#E0E0E0" Padding="5">
+                                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap"/>
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
+            <Button Content="Закрыть"
+                    Width="150"
+                    Height="40"
+                    FontSize="16"
+                    Click="BackButton_Click"
+                    Style="{DynamicResource AccentButton}"
+                    Margin="10"/>
+            <Button Content="Экспортировать"
+                    Width="150"
+                    Height="40"
+                    FontSize="16"
+                    Command="{Binding ExportCommand}"
+                    Style="{DynamicResource AccentButton}"
+                    Margin="10"/>
+        </StackPanel>
     </Grid>
 </Page>
