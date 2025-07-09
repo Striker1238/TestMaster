@@ -15,7 +15,7 @@ jobs:
 
     env:
       Solution_Name: TestMaster.sln
-      Build_Project: TestMaster/TestMaster.csproj
+      Build_Project: TestMaster.csproj
       Output_Dir: publish
 
     steps:
